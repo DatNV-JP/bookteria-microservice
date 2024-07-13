@@ -4,7 +4,6 @@ import com.devteria.gateway.dto.ApiResponse;
 import com.devteria.gateway.service.IdentityService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -37,7 +36,8 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
     IdentityService identityService;
 
     @NonFinal
-    private String[] publicEndpoints = {"/identity/auth/token"};
+    private String[] publicEndpoints = {"/identity/auth/.*",
+                                        "/identity/users/registration"};
 
     @Value("${app.api-prefix}")
     @NonFinal
@@ -66,11 +66,6 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
             else // fail -> throw ex
                 return unauthenticated(exchange.getResponse());
         }).onErrorResume(throwable -> unauthenticated(exchange.getResponse())); // tranh error nhu 503
-
-        // Delegate identity service
-
-        //
-
     }
 
     @Override
@@ -78,10 +73,20 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         return -1;
     }
 
+    /**
+     * is publid endpoint
+     * @param request
+     * @return
+     */
     private boolean isPublicEndpoint(ServerHttpRequest request) {
         return Arrays.stream(publicEndpoints).anyMatch(s -> request.getURI().getPath().matches(apiPrefix + s));
     }
 
+    /**
+     * unauthenticated
+     * @param response
+     * @return
+     */
     Mono<Void> unauthenticated(ServerHttpResponse response) {
         ApiResponse<?> apiResponse = ApiResponse.builder()
                 .code(1401)
@@ -95,7 +100,6 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         }
         response.setStatusCode(HttpStatus.UNAUTHORIZED);
         response.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-
         return response.writeWith(Mono.just(response.bufferFactory().wrap(body.getBytes())));
     }
 }
