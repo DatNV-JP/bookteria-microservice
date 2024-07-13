@@ -7,10 +7,10 @@ spring:
   application:
     name: identity-service
   datasource:
-    url: "jdbc:mysql://localhost:3306/bookteria_identity"
+    url: "jdbc:mysql://localhost:3308/bookteria_identity"
     driverClassName: "com.mysql.cj.jdbc.Driver"
     username: root
-    password: root
+    password: Password.1
   jpa:
     hibernate:
       ddl-auto: update
