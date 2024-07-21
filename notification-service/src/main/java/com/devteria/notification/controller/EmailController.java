@@ -41,7 +41,7 @@ public class EmailController {
         SendEmailRequest request = SendEmailRequest.builder()
                 .to(Recipient.builder().email("datnv11.fpoly@gmail.com").name("DatNV").build())
                 .subject("hello")
-                .htmlContent("Hello Anh Dat. Welcome to microservice!")
+                .htmlContent("Dat様. こんにちは。このメールは新規ユーザーが登録したことをお知らせ!\n" + message)
                 .build();
         return ApiResponse.<EmailResponse>builder().result(emailService.sendEmail(request)).build();
     }
