@@ -8,3 +8,14 @@ spring:
   data:
     mongodb:
       uri: mongodb://root:root@localhost:27017/notification-service?authSource=admin
+  kafka:
+    bootstrap-servers: localhost:9094
+    consumer:
+      group-id: notification-group
+      auto-offset-reset: earliest
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+notification:
+  send-email:
+    api-key: "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"
